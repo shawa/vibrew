@@ -1,0 +1,17 @@
+#!/bin/zsh
+
+set -euo pipefail
+
+function digest { shasum "${BREWFILE}" }
+
+
+readonly DIGEST_BEFORE="$(digest)"
+"${EDITOR}" "${BREWFILE}"
+readonly DIGEST_AFTER="$(digest)"
+
+if [[ "${DIGEST_AFTER}" == "${DIGEST_BEFORE}" ]]; then
+  echo "Brewfile not changed, nothing to do."
+  exit 1
+fi
+
+brew bundle --file "${BREWFILE}"
